@@ -126,6 +126,7 @@ eurekaserver\pom.xml
 Open the SpringBoot main class EurekaserverApplication.java . We can always identify the main class in a Spring Boot project by looking for the annotation @SpringBootApplication. On top of this main class, please add annotation '@EnableEurekaServer'. This annotation will make your microservice to act as a Spring Cloud Netflix Eureka Server. After making the changes your EurekaserverApplication.java class should like below,
 \src\main\java\com\libanto\bankeurekaserver\BankEurekaserverApplication.java
 
+```java
 package com.libanto.bankeurekaserver;
 
 import org.springframework.boot.SpringApplication;
@@ -141,7 +142,7 @@ public class BankEurekaserverApplication {
 	}
 
 }
-
+```
 
 Open the application.properties inside eurekaserver microservices and make the following entries inside it like we discussed in the course. These entries will help in connecting to the Config Server and to disable the ribbon features. Please note if you are using a Spring Boot version of >=2.5 then providing ribbon configurations is not required. After making the changes, your application.properties should like below,
 
