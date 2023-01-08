@@ -168,7 +168,7 @@ Please make sure to start your configserver microservices
 Go to your Spring Boot main class EurekaserverApplication.java and right click-> Run As -> Java Application. This will start your Spring Boot application successfully at port 8070 which is the port we configured inside eurekaserver.properties. Your can confirm the same by looking at the console logs.
 Access the URL http://localhost:8070 inside your browser and make sure that you are able to access the Eureka Dashboard home page.
 In order to make your accounts microservice to connect with eurekaserver, add the below dependencies inside accounts pom.xml like we discussed inside the course,
-    
+ ```xml   
     <dependency>
 	<groupId>org.springframework.cloud</groupId>
 	<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
@@ -177,9 +177,11 @@ In order to make your accounts microservice to connect with eurekaserver, add th
 	<groupId>org.springframework.cloud</groupId>
 	<artifactId>spring-cloud-starter-openfeign</artifactId>
     </dependency>
-    
+```
+
 Open the application.properties inside accounts microservices and add the below entries inside it which will help in integrating with eurekaserver
 \accounts\src\main\resources\application.properties
+
 ```property
 eureka.instance.preferIpAddress = true 
 eureka.client.registerWithEureka = true
@@ -199,11 +201,12 @@ management.endpoint.shutdown.enabled=true
 Go to your Spring Boot main class AccountsApplication.java and right click-> Run As -> Java Application. This will start your accounts microservice successfully at port 8080 which is the port we configured inside application.properties. Your can confirm the same by looking at the console logs.
 Access the Eureka Server Dashboard URL http://localhost:8070 inside your browser and make sure that you are able to see that accounts microservice details on the Eureka Dashboard home page.
 In order to make your loans, cards microservice to connect with eurekaserver, add the below dependency inside loans, cards pom.xml like we discussed inside the course,
+ ```xml
     <dependency>
 	<groupId>org.springframework.cloud</groupId>
 	<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
     </dependency>
-    
+ ```   
 Open the application.properties inside loans microservices and add the below entries inside it which will help in integrating with eurekaserver
 \loans\src\main\resources\application.properties
 ```property
