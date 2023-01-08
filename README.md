@@ -68,7 +68,7 @@ eurekaserver\pom.xml
 				<artifactId>spring-boot-maven-plugin</artifactId>
 				<configuration>
 					<image>
-						<name>eazybytes/${project.artifactId}</name>
+						<name>${project.artifactId}</name>
 					</image>
 				</configuration>
 			</plugin>
@@ -125,7 +125,7 @@ eureka.client.serviceUrl.defaultZone = http://localhost:8070/eureka/
 
 ## Configuring info endpoint
 info.app.name=Accounts Microservice
-info.app.description=Eazy Bank Accounts Application
+info.app.description=Libanto Bank Accounts Application
 info.app.version=1.0.0
 management.info.env.enabled = true
 
@@ -138,6 +138,7 @@ In order to make your loans, cards microservice to connect with eurekaserver, ad
 	<groupId>org.springframework.cloud</groupId>
 	<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
     </dependency>
+    
 Open the application.properties inside loans microservices and add the below entries inside it which will help in integrating with eurekaserver
 \loans\src\main\resources\application.properties
 eureka.instance.preferIpAddress = true 
@@ -403,7 +404,7 @@ services:
     ports:
       - "8071:8071"
     networks:
-     - eazybank
+     - libantobank
    
   eurekaserver:
     image: eazybytes/eurekaserver:latest
@@ -411,7 +412,7 @@ services:
     ports:
       - "8070:8070"
     networks:
-     - eazybank
+     - libantobank
     depends_on:
       - configserver
     deploy:
@@ -451,7 +452,7 @@ services:
     ports:
       - "8090:8090"
     networks:
-      - eazybank
+      - libantobank
     depends_on:
       - configserver
       - eurekaserver
@@ -472,7 +473,7 @@ services:
     ports:
       - "9000:9000"
     networks:
-      - eazybank
+      - libantobank
     depends_on:
       - configserver
       - eurekaserver
@@ -488,7 +489,7 @@ services:
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eurekaserver:8070/eureka/
       
 networks:
-  eazybank:
+  libantobank:
 \accounts\docker-compose\dev\docker-compose.yml
 version: "3.8"
 
