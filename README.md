@@ -245,7 +245,33 @@ encrypt.key=libantobankapplication
 
 </project>
 ```
+- Make sure all the required and associated libraries are downloaded under maven dependencies of accounts, loans, cards microservices.
+- Like we discussed in the course, add @RefreshScope annotation on top of AccountsApplication.java, LoansApplication.java and CardsApplication.java. This is completely optional and can be used in the scenarios where we want to refresh the properties loaded into the given microservice with out the need of restart. In order to refresh the properties we can invoke the POST API /actuator/refresh exposed by the actuator through Postman. This refresh API will be exposed only if we configure
+	
+	management.endpoints.web.exposure.include=* inside application.properties like mentioned in the below step.
+- Open the application.properties present inside accounts, loans, cards microservices and make sure to update the properties related to Config server details inside them. After making the changes, your application.properties files should like below. For more details please check the course videos.
+## \bank-accounts\src\main\resources\application.properties
+```property
+spring.datasource.url=jdbc:h2:mem:testdb
+spring.datasource.driverClassName=org.h2.Driver
+spring.datasource.username=sa
+spring.datasource.password=
+spring.jpa.database-platform=org.hibernate.dialect.H2Dialect
+spring.h2.console.web-allow-others=true
+#spring.h2.console.settings.web-allow-others=true
+spring.h2.console.enabled=true
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+logging.file.name = ./log/demo-app.log
 
+server.port=8080
+
+spring.application.name=accounts
+spring.profiles.active=prod
+spring.config.import=optional:configserver:http://localhost:8071/
+
+management.endpoints.web.exposure.include=*
+```
 
 # Service Discovery & Registration inside microservices network using Spring Cloud Netflix Eureka
 
