@@ -1,14 +1,21 @@
 
+# Configuration management inside microservices network using Spring Cloud Config
+### Key steps:
+- Go to https://start.spring.io/
+- Fill all the details required to generate a configserver Spring Boot project and add dependencies Config Server,Spring Boot Actuator. Click GENERATE which will download the configserver maven project in a zip format
+- Extract the downloaded maven project of configserver and import the same into Eclipse by following the steps mentioned in the course
+- Visit pom.xml of configserver and make sure all the required dependencies are present in it. Add spring-boot-maven-plugin plugin details along with docker image name details inside like we discussed in the course. This extra spring-boot-maven-plugin details will help us to generate a docker image using Buildpacks easily. Finally your pom.xml should looks like shown below,
+
 # Service Discovery & Registration inside microservices network using Spring Cloud Netflix Eureka
 
 Description: This repository has four maven projects with the names bank-accounts, bank-loans, bank-cards, bank-configserver. A new microservices 'bank-eurekaserver' is created based on Spring Cloud Netflix Eureka which will act as a Service Discovery & Registration server. All the existing microservices bank-accounts, bank-loans, bank-cards are updated to register themself with the bank-eurekaserver during the startup and send heartbeat signals.accounts microservice is also updated to connect with loans and cards microservices using Netflix Feign client. Below are the key steps that are followed inside this section8 where we focused on set up of Eureka Server inside our microservices network.
 
 Key steps:
 
-Go to https://start.spring.io/
-Fill all the details required to generate a eurekaserver Spring Boot project and add dependencies Eureka Server,Spring Boot Actuator, Config Client. Click GENERATE which will download the eurekaserver maven project in a zip format
-Extract the downloaded maven project of eurekaserver and import the same into Eclipse by following the steps mentioned in the course
-Visit pom.xml of eurekaserver and make sure all the required dependencies are present in it. Add spring-boot-maven-plugin plugin details along with docker image name details inside it like we discussed in the course. This extra spring-boot-maven-plugin details will help us to generate a docker image using Buildpacks easily. Please note if you are using a Spring Boot version of >=2.5 then mentioning ribbon to the exclusions list is not required. Finally your pom.xml should looks like shown below,
+- Go to https://start.spring.io/
+- Fill all the details required to generate a eurekaserver Spring Boot project and add dependencies Eureka Server,Spring Boot Actuator, Config Client. Click GENERATE which will download the eurekaserver maven project in a zip format
+  Extract the downloaded maven project of eurekaserver and import the same into Eclipse by following the steps mentioned in the course
+- Visit pom.xml of eurekaserver and make sure all the required dependencies are present in it. Add spring-boot-maven-plugin plugin details along with docker image name details inside it like we discussed in the course. This extra spring-boot-maven-plugin details will help us to generate a docker image using Buildpacks easily. Please note if you are using a Spring Boot version of >=2.5 then mentioning ribbon to the exclusions list is not required. Finally your pom.xml should looks like shown below,
 eurekaserver\pom.xml
 ```xml
 <?xml version="1.0" encoding="UTF-8"?>
