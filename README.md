@@ -178,6 +178,7 @@ In order to make your accounts microservice to connect with eurekaserver, add th
     
 Open the application.properties inside accounts microservices and add the below entries inside it which will help in integrating with eurekaserver
 \accounts\src\main\resources\application.properties
+```property
 eureka.instance.preferIpAddress = true 
 eureka.client.registerWithEureka = true
 eureka.client.fetchRegistry = true
@@ -191,6 +192,8 @@ management.info.env.enabled = true
 
 endpoints.shutdown.enabled=true
 management.endpoint.shutdown.enabled=true
+```
+
 Go to your Spring Boot main class AccountsApplication.java and right click-> Run As -> Java Application. This will start your accounts microservice successfully at port 8080 which is the port we configured inside application.properties. Your can confirm the same by looking at the console logs.
 Access the Eureka Server Dashboard URL http://localhost:8070 inside your browser and make sure that you are able to see that accounts microservice details on the Eureka Dashboard home page.
 In order to make your loans, cards microservice to connect with eurekaserver, add the below dependency inside loans, cards pom.xml like we discussed inside the course,
@@ -201,6 +204,7 @@ In order to make your loans, cards microservice to connect with eurekaserver, ad
     
 Open the application.properties inside loans microservices and add the below entries inside it which will help in integrating with eurekaserver
 \loans\src\main\resources\application.properties
+```property
 eureka.instance.preferIpAddress = true 
 eureka.client.registerWithEureka = true
 eureka.client.fetchRegistry = true
@@ -214,10 +218,11 @@ management.info.env.enabled = true
 
 endpoints.shutdown.enabled=true
 management.endpoint.shutdown.enabled=true
+```
 
 Open the application.properties inside cards microservices and add the below entries inside it which will help in integrating with eurekaserver
 \cards\src\main\resources\application.properties
-
+```property
 eureka.instance.preferIpAddress = true 
 eureka.client.registerWithEureka = true
 eureka.client.fetchRegistry = true
@@ -231,6 +236,7 @@ management.info.env.enabled = true
 
 endpoints.shutdown.enabled=true
 management.endpoint.shutdown.enabled=true
+```
 
 Go to your Spring Boot main class LoansApplication.java and right click-> Run As -> Java Application. This will start your loans microservice successfully at port 8090 which is the port we configured inside application.properties. Your can confirm the same by looking at the console logs.
 Go to your Spring Boot main class CardsApplication.java and right click-> Run As -> Java Application. This will start your cards microservice successfully at port 9000 which is the port we configured inside application.properties. Your can confirm the same by looking at the console logs.
@@ -239,6 +245,7 @@ In order to set up Client side load balancing using Feign client, add @EnableFei
 Like discussed in the course, create two interfaces with the name LoansFeignClient.java,CardsFeignClient.java inside accounts microservice project. These two interfaces and the methods inside them will help to communicate with loans and cards microservices using Feign client from accounts microservice. These two interfaces should like below,
 
 \accounts\src\main\java\com\eazybytes\accounts\service\client\LoansFeignClient.java
+```java
 package com.eazybytes.accounts.service.client;
 
 import java.util.List;
@@ -257,7 +264,11 @@ public interface LoansFeignClient {
 	@RequestMapping(method = RequestMethod.POST, value = "myLoans", consumes = "application/json")
 	List<Loans> getLoansDetails(@RequestBody Customer customer);
 }
+```
+
 \accounts\src\main\java\com\eazybytes\accounts\service\client\CardsFeignClient.java
+
+```java
 package com.eazybytes.accounts.service.client;
 
 import java.util.List;
@@ -276,8 +287,12 @@ public interface CardsFeignClient {
 	@RequestMapping(method = RequestMethod.POST, value = "myCards", consumes = "application/json")
 	List<Cards> getCardDetails(@RequestBody Customer customer);
 }
+
+```
+
 In order to fetch the cards and loans details using Feign client from accounts microservice, update the AccountsController.java to expose a new REST API /myCustomerDetails like we discussed inside the course. Your AccountsController.java should look like below,
 \accounts\src\main\java\com\eazybytes\accounts\controller\AccountsController.java
+```java
 /**
  * 
  */
@@ -362,8 +377,11 @@ public class AccountsController {
 	}
 
 }
+```
 Create the below three model classes inside accounts microservice which are needed by /myCustomerDetails REST API,
 \accounts\src\main\java\com\eazybytes\accounts\model\Loans.java
+
+```java
 package com.eazybytes.accounts.model;
 
 import java.sql.Date;
@@ -455,9 +473,12 @@ Restart the accounts microservice and test the feign client changes done by invo
 {
   "customerId": 1
 }
+
+```
 Generate the docker images and push them into Docker hub by following the similar steps we discussed in the previous sections.
 Now write docker-compose.yml files inside accounts/docker-compose folder for each profile with the following content,
 \accounts\docker-compose\default\docker-compose.yml
+```yml
 version: "3.8"
 
 services:
@@ -554,7 +575,10 @@ services:
       
 networks:
   libantobank:
+```
+
 \accounts\docker-compose\dev\docker-compose.yml
+```yml
 version: "3.8"
 
 services:
@@ -651,7 +675,11 @@ services:
       
 networks:
   eazybank:
+```
+
 \accounts\docker-compose\prod\docker-compose.yml
+
+```yml
 version: "3.8"
 
 services:
@@ -748,6 +776,8 @@ services:
       
 networks:
   eazybank:
+```
+
 Stop any running microservices inside your eclipse
 Based on the active profile that you want start the microservices, open the command line tool where the docker-compose.yml is present and run the docker compose command "docker-compose up" to start all the microservices containers with a single command. All the running containers can be validated by running a docker command "docker ps".
 To validate if individual microservices like accounts, loans & cards are able to register themselves with eurekaserver, invoke the Eureka Dashboard URL http://localhost:8070 through browser and validate the same. To test the feign client changes, invoke the endpoint http://localhost:8080/myCustomerDetails through Postman by passing the below request in JSON format. You should get the response from the accounts microservices which has all the details related to account, loans and cards.
