@@ -147,17 +147,20 @@ public class BankEurekaserverApplication {
 Open the application.properties inside eurekaserver microservices and make the following entries inside it like we discussed in the course. These entries will help in connecting to the Config Server and to disable the ribbon features. Please note if you are using a Spring Boot version of >=2.5 then providing ribbon configurations is not required. After making the changes, your application.properties should like below,
 
 \src\main\resources\application.properties
+```property
 spring.application.name=eurekaserver
 spring.config.import=optional:configserver:http://localhost:8071/
 spring.cloud.loadbalancer.ribbon.enabled=false
-
+```
 Like we discussed in the course please make sure to create a eurekaserver.properties with the below content inside the location where your Config Server is reading the properties,
 /eurekaserver.properties
+```property
 server.port=8070
 eureka.instance.hostname=localhost
 eureka.client.registerWithEureka=false
 eureka.client.fetchRegistry=false
 eureka.client.serviceUrl.defaultZone=http://${eureka.instance.hostname}:${server.port}/eureka/
+```
 
 Please make sure to start your configserver microservices
 Go to your Spring Boot main class EurekaserverApplication.java and right click-> Run As -> Java Application. This will start your Spring Boot application successfully at port 8070 which is the port we configured inside eurekaserver.properties. Your can confirm the same by looking at the console logs.
