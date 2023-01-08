@@ -10,6 +10,7 @@ Fill all the details required to generate a eurekaserver Spring Boot project and
 Extract the downloaded maven project of eurekaserver and import the same into Eclipse by following the steps mentioned in the course
 Visit pom.xml of eurekaserver and make sure all the required dependencies are present in it. Add spring-boot-maven-plugin plugin details along with docker image name details inside it like we discussed in the course. This extra spring-boot-maven-plugin details will help us to generate a docker image using Buildpacks easily. Please note if you are using a Spring Boot version of >=2.5 then mentioning ribbon to the exclusions list is not required. Finally your pom.xml should looks like shown below,
 eurekaserver\pom.xml
+```xml
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -122,6 +123,7 @@ eurekaserver\pom.xml
 	</pluginRepositories>
 
 </project>
+```
 
 Open the SpringBoot main class EurekaserverApplication.java . We can always identify the main class in a Spring Boot project by looking for the annotation @SpringBootApplication. On top of this main class, please add annotation '@EnableEurekaServer'. This annotation will make your microservice to act as a Spring Cloud Netflix Eureka Server. After making the changes your EurekaserverApplication.java class should like below,
 \src\main\java\com\libanto\bankeurekaserver\BankEurekaserverApplication.java
