@@ -126,20 +126,20 @@ eurekaserver\pom.xml
 Open the SpringBoot main class EurekaserverApplication.java . We can always identify the main class in a Spring Boot project by looking for the annotation @SpringBootApplication. On top of this main class, please add annotation '@EnableEurekaServer'. This annotation will make your microservice to act as a Spring Cloud Netflix Eureka Server. After making the changes your EurekaserverApplication.java class should like below,
 \src\main\java\com\libanto\bankeurekaserver\BankEurekaserverApplication.java
 
-
-package com.eaztbytes.eurekaserver;
-
 package com.libanto.bankeurekaserver;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cloud.netflix.eureka.server.EnableEurekaServer;
+
 @SpringBootApplication
 @EnableEurekaServer
 public class BankEurekaserverApplication {
+
 	public static void main(String[] args) {
 		SpringApplication.run(BankEurekaserverApplication.class, args);
 	}
+
 }
 
 
