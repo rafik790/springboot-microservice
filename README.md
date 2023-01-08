@@ -1,5 +1,5 @@
 
-**Service Discovery & Registration inside microservices network using Spring Cloud Netflix Eureka**
+##Service Discovery & Registration inside microservices network using Spring Cloud Netflix Eureka
 
 Description: This repository has four maven projects with the names bank-accounts, bank-loans, bank-cards, bank-configserver. A new microservices 'bank-eurekaserver' is created based on Spring Cloud Netflix Eureka which will act as a Service Discovery & Registration server. All the existing microservices bank-accounts, bank-loans, bank-cards are updated to register themself with the bank-eurekaserver during the startup and send heartbeat signals.accounts microservice is also updated to connect with loans and cards microservices using Netflix Feign client. Below are the key steps that are followed inside this section8 where we focused on set up of Eureka Server inside our microservices network.
 
