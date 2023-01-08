@@ -1,0 +1,70 @@
+version: "3.8"
+
+services:
+  configserver:
+    image: rafik790/bank-configserver:latest
+    mem_limit: 700m
+    ports:
+      - "8071:8071"
+    networks:
+      - libantobank
+      
+  accounts:
+    image: rafik790/bank-accounts:latest
+    mem_limit: 700m
+    ports:
+      - "8080:8080"
+    networks:
+      - libantobank
+    depends_on:
+      - configserver
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/
+    
+  loans:
+    image: rafik790/bank-loans:latest
+    mem_limit: 700m
+    ports:
+      - "8090:8090"
+    networks:
+      - libantobank
+    depends_on:
+      - configserver
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/
+    
+  cards:
+    image: rafik790/bank-cards:latest
+    mem_limit: 700m
+    ports:
+      - "9090:9090"
+    networks:
+      - libantobank
+    depends_on:
+      - configserver
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/
+    
+networks:
+  libantobank:
