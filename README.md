@@ -128,6 +128,124 @@ public class BankConfigserverApplication {
 }
 
 ```
+- Create a config folder under the path 'configserver\src\main\resources' and copy all the 9 property files related to accounts, loans and cards microservices like mentioned in the course.
+- Open the application.properties inside configserver microservices and make the following entries inside it which will help in reading the properties from a given classpath location. Please note that encrypt.key is optional and can be used only in the scenarios where you want configserver to handle the encryption/decryption of the properties like we discussed in the course.
+## \src\main\resources\application.properties
+```property
+spring.application.name=configserver
+spring.profiles.active=native
+spring.cloud.config.server.native.search-locations=classpath:/config
+server.port=8071
+encrypt.key=libantobankapplication
+```
+- Go to your Spring Boot main class BankConfigserverApplication.java and right click-> Run As -> Java Application. This will start your Spring Boot application successfully at port 8071 which is the port we configured inside application.properties. Your can confirm the same by looking at the console logs.
+- Access the URLs like http://localhost:8071/accounts/default, http://localhost:8071/loans/dev, http://localhost:8071/cards/prod inside your browser to randomly validate the properties being exposed by Config Server for all the three microservices accounts, loans and cards.
+- Stop the Config Server microservices which started at port 8071 earlier.
+- Open the application.properties inside configserver microservices and make the following entries inside it which will help in reading the properties from a given file system location. Please make sure to create the configured folder/filesystem in your system and copy all the 9 property files related to accounts, loans and cards microservices like mentioned in the course.
+- Create Github repository and upload all the 9 property files related to accounts, loans and cards microservices in to it like mentioned in the course. You can refer to https://github.com/rafik790/microservice-config as a sample reference.
+- Open the application.properties inside configserver microservices and make the following entries inside it which will help in reading the properties from a given Github repository.
+## \src\main\resources\application.properties
+```property
+spring.application.name=configserver
+
+#spring.profiles.active=native
+#spring.cloud.config.server.native.search-locations=classpath:/config
+spring.profiles.active=git
+spring.cloud.config.server.git.uri=https://github.com/rafik790/microservice-config.git
+spring.cloud.config.server.git.clone-on-start=true
+spring.cloud.config.server.git.default-label=main
+server.port=8071
+encrypt.key=libantobankapplication
+```
+- Go to your Spring Boot main class BankConfigserverApplication.java and right click-> Run As -> Java Application. This will start your Spring Boot application successfully at port 8071 which is the port we configured inside application.properties. Your can confirm the same by looking at the console logs.
+- Access the URLs like http://localhost:8071/accounts/default, http://localhost:8071/loans/dev, http://localhost:8071/cards/prod inside your browser to randomly validate that properties are being read from configured Github location by Config Server for all the three microservices accounts, loans and cards.
+- Now in order to integrate individual microservices accounts, loans and cards with configserver, please update the pom.xml files inside these microservices with <spring-cloud.version> details, spring-cloud-starter-config dependency, spring-cloud-dependencies under dependencyManagement. After making the changes, your pom.xml files should like below. 
+## accounts\pom.xml
+```yml
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>2.7.8-SNAPSHOT</version>
+		<relativePath/> <!-- lookup parent from repository -->
+	</parent>
+	<groupId>com.libanto.net</groupId>
+	<artifactId>bank-accounts</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>bank-accounts</name>
+	<description>Demo project for Spring Boot</description>
+	<properties>
+		<java.version>11</java.version>
+		<spring-cloud.version>2021.0.5</spring-cloud.version>
+	</properties>
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-jpa</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-config</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
+		
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<scope>runtime</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.projectlombok</groupId>
+			<artifactId>lombok</artifactId>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-dependencies</artifactId>
+				<version>${spring-cloud.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<excludes>
+						<exclude>
+							<groupId>org.projectlombok</groupId>
+							<artifactId>lombok</artifactId>
+						</exclude>
+					</excludes>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>
+```
+
 
 # Service Discovery & Registration inside microservices network using Spring Cloud Netflix Eureka
 
