@@ -1,5 +1,7 @@
 package com.libanto.net.bankaccounts.controllers;
 
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +17,11 @@ import com.libanto.net.bankaccounts.config.AccountServiceConfig;
 import com.libanto.net.bankaccounts.entity.Account;
 import com.libanto.net.bankaccounts.entity.Properties;
 import com.libanto.net.bankaccounts.repository.AccountRepository;
+import com.libanto.net.bankaccounts.resp.CardResp;
+import com.libanto.net.bankaccounts.resp.CustomerDetailsResp;
+import com.libanto.net.bankaccounts.resp.LoanResp;
+import com.libanto.net.bankaccounts.service.client.CardsFeignClient;
+import com.libanto.net.bankaccounts.service.client.LoansFeignClient;
 
 
 @RestController
@@ -26,6 +33,13 @@ public class AccountsController {
 	
 	@Autowired
 	AccountServiceConfig accountConfig;
+	
+	@Autowired
+	LoansFeignClient loansFeignClient;
+
+	@Autowired
+	CardsFeignClient cardsFeignClient;
+	
 	
 	@GetMapping("/api/myAccount/{customerId}")
 	public Account getMyAccountDetails(@PathVariable(value = "customerId") int customerId) {
@@ -45,4 +59,22 @@ public class AccountsController {
 		String jsonStr = ow.writeValueAsString(properties);
 		return jsonStr;
 	}
+	
+	
+	@GetMapping("/api/getCustomerDetails/{customerId}")
+	public CustomerDetailsResp myCustomerDetails(@PathVariable(value = "customerId") int customerId) {
+		Account accounts = accountsRepository.findByCustomerId(customerId);
+		List<LoanResp> loans = loansFeignClient.getMyLoans(customerId);
+		List<CardResp> cards = cardsFeignClient.getMyCards(customerId);
+
+		CustomerDetailsResp customerDetails = new CustomerDetailsResp();
+		customerDetails.setAccount(accounts);
+		customerDetails.setLoans(loans);
+		customerDetails.setCards(cards);
+		
+		return customerDetails;
+
+	}
+	
+	
 }
