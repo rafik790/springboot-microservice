@@ -246,8 +246,9 @@ management.endpoint.shutdown.enabled=true
 Go to your Spring Boot main class LoansApplication.java and right click-> Run As -> Java Application. This will start your loans microservice successfully at port 8090 which is the port we configured inside application.properties. Your can confirm the same by looking at the console logs.
 Go to your Spring Boot main class CardsApplication.java and right click-> Run As -> Java Application. This will start your cards microservice successfully at port 9000 which is the port we configured inside application.properties. Your can confirm the same by looking at the console logs.
 Access the Eureka Server Dashboard URL http://localhost:8070 inside your browser and make sure that you are able to see that loans, cards microservices details on the Eureka Dashboard home page.
-In order to set up Client side load balancing using Feign client, add @EnableFeignClients annotation on top of AccountsApplication.java class which is present inside accounts microservice.
-Like discussed in the course, create two interfaces with the name LoansFeignClient.java,CardsFeignClient.java inside accounts microservice project. These two interfaces and the methods inside them will help to communicate with loans and cards microservices using Feign client from accounts microservice. These two interfaces should like below,
+
+# Client Side Load balancing
+In order to set up Client side load balancing using Feign client, add @EnableFeignClients annotation on top of AccountsApplication.java class which is present inside accounts microservice. Like discussed in the course, create two interfaces with the name LoansFeignClient.java,CardsFeignClient.java inside accounts microservice project. These two interfaces and the methods inside them will help to communicate with loans and cards microservices using Feign client from accounts microservice. These two interfaces should like below,
 
 \accounts\src\main\java\com\eazybytes\accounts\service\client\LoansFeignClient.java
 ```java
