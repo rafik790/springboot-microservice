@@ -6,6 +6,129 @@
 - Extract the downloaded maven project of configserver and import the same into Eclipse by following the steps mentioned in the course
 - Visit pom.xml of configserver and make sure all the required dependencies are present in it. Add spring-boot-maven-plugin plugin details along with docker image name details inside like we discussed in the course. This extra spring-boot-maven-plugin details will help us to generate a docker image using Buildpacks easily. Finally your pom.xml should looks like shown below,
 
+##configserver\pom.xml
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>2.7.8-SNAPSHOT</version>
+		<relativePath/> <!-- lookup parent from repository -->
+	</parent>
+	<groupId>com.libanto</groupId>
+	<artifactId>bank-configserver</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>bank-configserver</name>
+	<description>Demo project for Spring Boot</description>
+	<properties>
+		<java.version>11</java.version>
+		<spring-cloud.version>2021.0.5</spring-cloud.version>
+	</properties>
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-actuator</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-config-server</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+	</dependencies>
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-dependencies</artifactId>
+				<version>${spring-cloud.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<configuration>
+					<image>
+						<name>${project.artifactId}</name>
+					</image>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+	<repositories>
+		<repository>
+			<id>spring-milestones</id>
+			<name>Spring Milestones</name>
+			<url>https://repo.spring.io/milestone</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>spring-snapshots</id>
+			<name>Spring Snapshots</name>
+			<url>https://repo.spring.io/snapshot</url>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+		</repository>
+	</repositories>
+	<pluginRepositories>
+		<pluginRepository>
+			<id>spring-milestones</id>
+			<name>Spring Milestones</name>
+			<url>https://repo.spring.io/milestone</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</pluginRepository>
+		<pluginRepository>
+			<id>spring-snapshots</id>
+			<name>Spring Snapshots</name>
+			<url>https://repo.spring.io/snapshot</url>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+		</pluginRepository>
+	</pluginRepositories>
+
+</project>
+
+```
+- Open the SpringBoot main class BankConfigserverApplication.java . We can always identify the main class in a Spring Boot project by looking for the annotation @SpringBootApplication. On top of this main class, please add annotation '@EnableConfigServer'. This annotation will make your microservice to act as a Spring Cloud Config Server. After making the changes your ConfigserverApplication.java class should like below,
+
+```java
+package com.libanto.bankconfigserver;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.cloud.config.server.EnableConfigServer;
+
+@SpringBootApplication
+@EnableConfigServer
+public class BankConfigserverApplication {
+
+	public static void main(String[] args) {
+		SpringApplication.run(BankConfigserverApplication.class, args);
+	}
+
+}
+
+```
+
 # Service Discovery & Registration inside microservices network using Spring Cloud Netflix Eureka
 
 Description: This repository has four maven projects with the names bank-accounts, bank-loans, bank-cards, bank-configserver. A new microservices 'bank-eurekaserver' is created based on Spring Cloud Netflix Eureka which will act as a Service Discovery & Registration server. All the existing microservices bank-accounts, bank-loans, bank-cards are updated to register themself with the bank-eurekaserver during the startup and send heartbeat signals.accounts microservice is also updated to connect with loans and cards microservices using Netflix Feign client. Below are the key steps that are followed inside this section8 where we focused on set up of Eureka Server inside our microservices network.
