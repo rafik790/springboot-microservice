@@ -24,6 +24,7 @@ import com.libanto.net.bankaccounts.service.client.CardsFeignClient;
 import com.libanto.net.bankaccounts.service.client.LoansFeignClient;
 
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import io.github.resilience4j.retry.annotation.Retry;
 
 
@@ -90,6 +91,17 @@ public class AccountsController {
 		customerDetails.setLoans(loans);
 		return customerDetails;
 
+	}
+	
+	@GetMapping("/sayHello")
+	@RateLimiter(name = "sayHello", fallbackMethod = "sayHelloFallback")
+	public String sayHello() {
+		return "Hello, Welcome to LibantoBank";
+	}
+
+	@SuppressWarnings("unused")
+	private String sayHelloFallback(Throwable t) {
+		return "Hi, You exceed rate limit ";
 	}
 	
 	
