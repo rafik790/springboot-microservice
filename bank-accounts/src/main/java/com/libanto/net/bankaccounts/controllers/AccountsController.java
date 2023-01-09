@@ -24,6 +24,7 @@ import com.libanto.net.bankaccounts.service.client.CardsFeignClient;
 import com.libanto.net.bankaccounts.service.client.LoansFeignClient;
 
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import io.github.resilience4j.retry.annotation.Retry;
 
 
 @RestController
@@ -64,7 +65,8 @@ public class AccountsController {
 	
 	
 	@GetMapping("/api/getCustomerDetails/{customerId}")
-	@CircuitBreaker(name="getCustomerDetailsCircuitBreaker",fallbackMethod="getCustomerDetailsFallBack")
+	/*@CircuitBreaker(name="getCustomerDetailsCircuitBreaker",fallbackMethod="getCustomerDetailsFallBack")*/
+	@Retry(name="getCustomerDetailsRetry",fallbackMethod="getCustomerDetailsFallBack")
 	public CustomerDetailsResp myCustomerDetails(@PathVariable(value = "customerId") int customerId) {
 		Account accounts = accountsRepository.findByCustomerId(customerId);
 		List<LoanResp> loans = loansFeignClient.getMyLoans(customerId);
