@@ -23,6 +23,8 @@ import com.libanto.net.bankaccounts.resp.LoanResp;
 import com.libanto.net.bankaccounts.service.client.CardsFeignClient;
 import com.libanto.net.bankaccounts.service.client.LoansFeignClient;
 
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+
 
 @RestController
 public class AccountsController {
@@ -62,6 +64,7 @@ public class AccountsController {
 	
 	
 	@GetMapping("/api/getCustomerDetails/{customerId}")
+	@CircuitBreaker(name="getCustomerDetailsCircuitBreaker",fallbackMethod="getCustomerDetailsFallBack")
 	public CustomerDetailsResp myCustomerDetails(@PathVariable(value = "customerId") int customerId) {
 		Account accounts = accountsRepository.findByCustomerId(customerId);
 		List<LoanResp> loans = loansFeignClient.getMyLoans(customerId);
@@ -72,6 +75,17 @@ public class AccountsController {
 		customerDetails.setLoans(loans);
 		customerDetails.setCards(cards);
 		
+		return customerDetails;
+
+	}
+	
+	@SuppressWarnings("unused")
+	private CustomerDetailsResp getCustomerDetailsFallBack(int customerId, Throwable t) {
+		Account accounts = accountsRepository.findByCustomerId(customerId);
+		List<LoanResp> loans = loansFeignClient.getMyLoans(customerId);
+		CustomerDetailsResp customerDetails = new CustomerDetailsResp();
+		customerDetails.setAccount(accounts);
+		customerDetails.setLoans(loans);
 		return customerDetails;
 
 	}
