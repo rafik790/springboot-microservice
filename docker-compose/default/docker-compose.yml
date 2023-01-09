@@ -8,6 +8,24 @@ services:
       - "8071:8071"
     networks:
       - libantobank
+  eurekaserver:
+    image: rafik790/bank-eurekaserver:latest
+    mem_limit: 700m
+    ports:
+      - "8070:8070"
+    networks:
+      - libantobank
+    depends_on:
+      - configserver
+    deploy:
+      restart_policy:
+        condition: on-failure
+        delay: 15s
+        max_attempts: 3
+        window: 120s
+    environment:
+      SPRING_PROFILES_ACTIVE: default
+      SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/
       
   accounts:
     image: rafik790/bank-accounts:latest
@@ -18,16 +36,18 @@ services:
       - libantobank
     depends_on:
       - configserver
+      - eurekaserver
     deploy:
       restart_policy:
         condition: on-failure
-        delay: 5s
+        delay: 30s
         max_attempts: 3
         window: 120s
     environment:
       SPRING_PROFILES_ACTIVE: default
       SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/
-    
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eurekaserver:8070/eureka/
+     
   loans:
     image: rafik790/bank-loans:latest
     mem_limit: 700m
@@ -37,15 +57,17 @@ services:
       - libantobank
     depends_on:
       - configserver
+      - eurekaserver
     deploy:
       restart_policy:
         condition: on-failure
-        delay: 5s
+        delay: 30s
         max_attempts: 3
         window: 120s
     environment:
       SPRING_PROFILES_ACTIVE: default
       SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eurekaserver:8070/eureka/
     
   cards:
     image: rafik790/bank-cards:latest
@@ -56,15 +78,17 @@ services:
       - libantobank
     depends_on:
       - configserver
+      - eurekaserver
     deploy:
       restart_policy:
         condition: on-failure
-        delay: 5s
+        delay: 30s
         max_attempts: 3
         window: 120s
     environment:
       SPRING_PROFILES_ACTIVE: default
       SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/
-    
+      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eurekaserver:8070/eureka/
+      
 networks:
   libantobank:
