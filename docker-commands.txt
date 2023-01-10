@@ -5,6 +5,10 @@ Net stop com.docker.service
 run docker service::
 Net start com.docker.service
 
+Solve Docker Issue startup issue (Open powershell as administractor)::
+& 'C:\Program Files\Docker\Docker\DockerCli.exe' -SwitchDaemon
+
+
 docker build . -t <IMAGE-NAME>
 docker images
 docker pull <IMAGE-NAME>
