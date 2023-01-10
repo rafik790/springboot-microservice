@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -30,15 +31,16 @@ public class LoanController {
 	@Autowired
 	LoanServiceConfig loansConfig;
 	
-	@GetMapping("/api/myLoans/{customerId}")
-	public ResponseEntity<List<Loan>> getLoansDetails(@PathVariable(value = "customerId") int customerId) {
+	@GetMapping("/myLoans/{customerId}")
+	public ResponseEntity<List<Loan>> getLoansDetails(@RequestHeader("libanto-correlation-id") String correlationid,@PathVariable(value = "customerId") int customerId) {
 		LOGGER.info("Custmer ID::{}",customerId);
+		LOGGER.info("Correlation ID::{}",correlationid);
 		List<Loan> loans = loanRepository.findByCustomerIdOrderByStartDtDesc(customerId);
 		LOGGER.info("Loan Count::{}",loans.size());
 		return ResponseEntity.ok().body(loans);
 	}
 	
-	@GetMapping("/api/loans/properties")
+	@GetMapping("/loans/properties")
 	public String getPropertyDetails() throws JsonProcessingException {
 		ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
 		Properties properties = new Properties(loansConfig.getMsg(), loansConfig.getBuildVersion(),

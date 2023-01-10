@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -29,9 +30,10 @@ public class CardController {
 	@Autowired
 	private CardServiceConfig cardService;
 
-	@GetMapping("/api/myCards/{customerId}")
-	public List<Card> getCardDetails(@PathVariable(value = "customerId") int customerId) {
+	@GetMapping("/myCards/{customerId}")
+	public List<Card> getCardDetails(@RequestHeader("libanto-correlation-id") String correlationid,@PathVariable(value = "customerId") int customerId) {
 		LOGGER.info("Custmer ID::{}",customerId);
+		LOGGER.info("Correlation ID::{}",correlationid);
 		
 		List<Card> cards = cardsRepository.findByCustomerId(customerId);
 		if (cards != null) {
@@ -43,7 +45,7 @@ public class CardController {
 
 	}
 	
-	@GetMapping("/api/card/properties")
+	@GetMapping("/card/properties")
 	public String getPropertyDetails() throws JsonProcessingException {
 		ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
 		Properties properties = new Properties(cardService.getMsg(), cardService.getBuildVersion(),

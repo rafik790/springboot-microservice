@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -45,7 +46,7 @@ public class AccountsController {
 	CardsFeignClient cardsFeignClient;
 	
 	
-	@GetMapping("/api/myAccount/{customerId}")
+	@GetMapping("/myAccount/{customerId}")
 	public Account getMyAccountDetails(@PathVariable(value = "customerId") int customerId) {
 		LOGGER.info("Customer ID: {}", customerId);
 		Account account = accountsRepository.findByCustomerId(customerId);
@@ -55,7 +56,7 @@ public class AccountsController {
 	}
 	
 
-	@GetMapping("/api/account/properties")
+	@GetMapping("/account/properties")
 	public String getPropertyDetails() throws JsonProcessingException {
 		ObjectWriter ow = new ObjectMapper().writer().withDefaultPrettyPrinter();
 		Properties properties = new Properties(accountConfig.getMsg(), accountConfig.getBuildVersion(),
@@ -65,13 +66,15 @@ public class AccountsController {
 	}
 	
 	
-	@GetMapping("/api/getCustomerDetails/{customerId}")
+	@GetMapping("/getCustomerDetails/{customerId}")
 	/*@CircuitBreaker(name="getCustomerDetailsCircuitBreaker",fallbackMethod="getCustomerDetailsFallBack")*/
 	@Retry(name="getCustomerDetailsRetry",fallbackMethod="getCustomerDetailsFallBack")
-	public CustomerDetailsResp myCustomerDetails(@PathVariable(value = "customerId") int customerId) {
+	public CustomerDetailsResp myCustomerDetails(@RequestHeader("libanto-correlation-id") String correlationid,
+			@PathVariable(value = "customerId") int customerId) {
+		LOGGER.info("correlation-id: {}", correlationid);
 		Account accounts = accountsRepository.findByCustomerId(customerId);
-		List<LoanResp> loans = loansFeignClient.getMyLoans(customerId);
-		List<CardResp> cards = cardsFeignClient.getMyCards(customerId);
+		List<LoanResp> loans = loansFeignClient.getMyLoans(correlationid,customerId);
+		List<CardResp> cards = cardsFeignClient.getMyCards(correlationid,customerId);
 
 		CustomerDetailsResp customerDetails = new CustomerDetailsResp();
 		customerDetails.setAccount(accounts);
@@ -83,9 +86,9 @@ public class AccountsController {
 	}
 	
 	@SuppressWarnings("unused")
-	private CustomerDetailsResp getCustomerDetailsFallBack(int customerId, Throwable t) {
+	private CustomerDetailsResp getCustomerDetailsFallBack(String correlationid,int customerId, Throwable t) {
 		Account accounts = accountsRepository.findByCustomerId(customerId);
-		List<LoanResp> loans = loansFeignClient.getMyLoans(customerId);
+		List<LoanResp> loans = loansFeignClient.getMyLoans(correlationid,customerId);
 		CustomerDetailsResp customerDetails = new CustomerDetailsResp();
 		customerDetails.setAccount(accounts);
 		customerDetails.setLoans(loans);
