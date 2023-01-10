@@ -1,0 +1,34 @@
+Open powershell as administractor::
+stop docker service::
+Net stop com.docker.service
+
+run docker service::
+Net start com.docker.service
+
+docker build . -t <IMAGE-NAME>
+docker images
+docker pull <IMAGE-NAME>
+docker ps
+docker stop <CONTAINER-ID>
+
+Start working in container:::
+$sudo docker exec -it <CONTAINER-ID> bash
+
+Come out of container:::
+$exit
+
+Delete container which is running::
+$sudo docker rm -f <CONATNER-ID>
+
+Delete image which is running::
+$sudo docker image rm -f <IMAGE-NAME>
+
+Create an docker image from docker container::
+$sudo docker commit <CONAINER-ID> <IMAGE-NAME-YOU-WANT>
+
+Login to docker hub::
+$docker login -u "rafik790" -p "10Rafkol@" docker.io
+
+Run docker images:
+docker run -it -p 8090:8090 -d rafik790/micro/bank-loans
+
