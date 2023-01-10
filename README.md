@@ -1058,9 +1058,9 @@ networks:
   eazybank:
 ```
 
-Stop any running microservices inside your eclipse
-Based on the active profile that you want start the microservices, open the command line tool where the docker-compose.yml is present and run the docker compose command "docker-compose up" to start all the microservices containers with a single command. All the running containers can be validated by running a docker command "docker ps".
-To validate if individual microservices like accounts, loans & cards are able to register themselves with eurekaserver, invoke the Eureka Dashboard URL http://localhost:8070 through browser and validate the same. To test the feign client changes, invoke the endpoint http://localhost:8080/myCustomerDetails through Postman by passing the below request in JSON format. You should get the response from the accounts microservices which has all the details related to account, loans and cards.
+- Stop any running microservices inside your eclipse
+- Based on the active profile that you want start the microservices, open the command line tool where the docker-compose.yml is present and run the docker compose command "docker-compose up" to start all the microservices containers with a single command. All the running containers can be validated by running a docker command "docker ps".
+- To validate if individual microservices like accounts, loans & cards are able to register themselves with eurekaserver, invoke the Eureka Dashboard URL http://localhost:8070 through browser and validate the same. To test the feign client changes, invoke the endpoint http://localhost:8080/myCustomerDetails through Postman by passing the below request in JSON format. You should get the response from the accounts microservices which has all the details related to account, loans and cards.
 {
     "customerId": 1
 }
