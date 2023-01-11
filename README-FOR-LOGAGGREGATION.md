@@ -155,13 +155,11 @@ public class AccountsController {
 ```
 
 - Start all the microservices in the order of **configserver, eurekaserver, accounts, loans, cards, gatewayserver**.
-- Once all the microservices are started, access the URL http://localhost:8072/accounts/myCusomerDetails through Postman by passing the below request in JSON format. 
+- Once all the microservices are started, access the URL http://localhost:8072/api/accounts/getCustomerDetails/1 through Postman by passing the below request in JSON format. 
   You should be able to see the logger statements along with **App name, Trace ID, Span ID** like we discussed in the course.
-  ```json
-  {
-    "customerId": 1
-  }
-  ```
+ 
+ ## Zipkin
+ 
  - Now in order to use distributed tracing using **Zipkin**, run the docker command **'docker run -d -p 9411:9411 openzipkin/zipkin'**. This docker command will start the zipkin docker container using the provided docker image.
  - To validate if the zipkin server started successfully or not, visit the URL http://localhost:9411/zipkin inside your browser. You should be able to see the zipkin home page.
  - Stop all the microservices that are previously started in order to update them with zipkin related changes.
