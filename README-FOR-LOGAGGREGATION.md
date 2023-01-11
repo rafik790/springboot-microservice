@@ -191,13 +191,9 @@ public class AccountsController {
 
   ```
 - Start all the microservices in the order of **configserver, eurekaserver, accounts, loans, cards, gatewayserver**.
-- Once all the microservices are started, access the URL http://localhost:8072/accounts/myCusomerDetails through Postman by passing the below request in JSON format. 
+- Once all the microservices are started, access the URL http://localhost:8072/api/accounts/getCustomerDetails/1 through Postman by passing the below request in JSON format. 
   You should be able to see the tracing details inside zipkin console like we discussed in the course.
-  ```json
-  {
-    "customerId": 1
-  }
-  ```
+  
 - Stop all the microservices that are previously started in order to update them with Rabbit MQ related changes.
 - Now in order to push all the loggers into Rabbit MQ asynchronously, open the **pom.xml** of all the microservices **accounts, loans, cards, configserver, eurekaserver, gatewayserver** and make sure to add the below required dependency of **Rabbit MQ** in all of them. But please note that 
 this will work only with Sleuth. In case if you are using micrometer, it doesn't support pushing loggers into Rabbit MQ asynchronously as of now.
