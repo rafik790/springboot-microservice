@@ -1,8 +1,7 @@
 ### Monitoring Microservices Metrics & Health inside microservices network using Micrometer, Prometheus, Grafana
 ---
 
-**Description:** This repository has six maven projects with the names **accounts, loans, cards, configserver, eurekaserver, gatewayserver** which are continuation from the 
-section11 repository. All these microservices will be updated in this section to implement monitoring metrics & health inside microservices network using **micrometer, 
+**Description:** We have six maven projects with the names **accounts, loans, cards, configserver, eurekaserver, gatewayserver** which are continuation. All these microservices will be updated in this section to implement monitoring metrics & health inside microservices network using **micrometer, 
 prometheus, grafana.**
 
 **Key steps:**
