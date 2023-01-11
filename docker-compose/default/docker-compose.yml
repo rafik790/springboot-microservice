@@ -1,6 +1,14 @@
 version: "3.8"
 
 services:
+   zipkin:
+    image: openzipkin/zipkin
+    mem_limit: 700m
+    ports:
+      - "9411:9411"
+    networks:
+     - libantobank
+     
   configserver:
     image: rafik790/bank-configserver:latest
     mem_limit: 700m
@@ -8,6 +16,9 @@ services:
       - "8071:8071"
     networks:
       - libantobank
+    depends_on:
+      - services
+      
   eurekaserver:
     image: rafik790/bank-eurekaserver:latest
     mem_limit: 700m

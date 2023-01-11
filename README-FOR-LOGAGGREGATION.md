@@ -156,7 +156,7 @@ public class AccountsController {
 
 - Start all the microservices in the order of **configserver, eurekaserver, accounts, loans, cards, gatewayserver**.
 - Once all the microservices are started, access the URL http://localhost:8072/api/accounts/getCustomerDetails/1 through Postman by passing the below request in JSON format. 
-  You should be able to see the logger statements along with **App name, Trace ID, Span ID** like we discussed in the course.
+  You should be able to see the logger statements along with **App name, Trace ID, Span ID**.
  
  ## Zipkin
  
@@ -218,13 +218,8 @@ this will work only with Sleuth. In case if you are using micrometer, it doesn't
   spring.rabbitmq.password=guest
   ```
 - Start all the microservices in the order of **configserver, eurekaserver, accounts, loans, cards, gatewayserver**.
-- Once all the microservices are started, access the URL http://localhost:8072/accounts/myCusomerDetails through Postman by passing the below request in JSON format. 
-  You should be able to see the tracing details inside Rabbit MQ console like we discussed in the course.
-  ```json
-  {
-    "customerId": 1
-  }
-  ```
+- Once all the microservices are started, access the URL http://localhost:8072/api/accounts/getCustomerDetails/1 through Postman by passing the below request in JSON format. 
+  You should be able to see the tracing details inside Rabbit MQ console.
 - Stop all the microservices that are running inside the eclipse.
 - Before generating the docker images for all the microservices, comment all the changes related to Rabbit MQ inside all the microservices like we discussed in the course.
 - Generate the docker images for all the microservices and push them into Docker hub by following the similar steps we discussed in the previous sections.
@@ -234,183 +229,31 @@ this will work only with Sleuth. In case if you are using micrometer, it doesn't
 version: "3.8"
 
 services:
-
-  zipkin:
+   zipkin:
     image: openzipkin/zipkin
     mem_limit: 700m
     ports:
       - "9411:9411"
     networks:
-     - eazybank
-  
-  configserver:
-    image: eazybytes/configserver:latest
-    mem_limit: 700m
-    ports:
-      - "8071:8071"
-    networks:
-     - eazybank
-    depends_on:
-      - zipkin
-    environment:
-      SPRING_PROFILES_ACTIVE: default
-      # SPRING_ZIPKIN_BASEURL: http://zipkin:9411/
-      MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: http://zipkin:9411/api/v2/spans
-   
-  eurekaserver:
-    image: eazybytes/eurekaserver:latest
-    mem_limit: 700m
-    ports:
-      - "8070:8070"
-    networks:
-     - eazybank
-    depends_on:
-      - configserver
-    deploy:
-      restart_policy:
-        condition: on-failure
-        delay: 15s
-        max_attempts: 3
-        window: 120s
-    environment:
-      SPRING_PROFILES_ACTIVE: default
-      SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/
-      # SPRING_ZIPKIN_BASEURL: http://zipkin:9411/
-      MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: http://zipkin:9411/api/v2/spans
-      
-  accounts:
-    image: eazybytes/accounts:latest
-    mem_limit: 700m
-    ports:
-      - "8080:8080"
-    networks:
-      - eazybank
-    depends_on:
-      - configserver
-      - eurekaserver
-    deploy:
-      restart_policy:
-        condition: on-failure
-        delay: 30s
-        max_attempts: 3
-        window: 120s
-    environment:
-      SPRING_PROFILES_ACTIVE: default
-      SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/
-      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eurekaserver:8070/eureka/
-      # SPRING_ZIPKIN_BASEURL: http://zipkin:9411/
-      MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: http://zipkin:9411/api/v2/spans
-  
-  loans:
-    image: eazybytes/loans:latest
-    mem_limit: 700m
-    ports:
-      - "8090:8090"
-    networks:
-      - eazybank
-    depends_on:
-      - configserver
-      - eurekaserver
-    deploy:
-      restart_policy:
-        condition: on-failure
-        delay: 30s
-        max_attempts: 3
-        window: 120s
-    environment:
-      SPRING_PROFILES_ACTIVE: default
-      SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/
-      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eurekaserver:8070/eureka/
-      # SPRING_ZIPKIN_BASEURL: http://zipkin:9411/
-      MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: http://zipkin:9411/api/v2/spans
-    
-  cards:
-    image: eazybytes/cards:latest
-    mem_limit: 700m
-    ports:
-      - "9000:9000"
-    networks:
-      - eazybank
-    depends_on:
-      - configserver
-      - eurekaserver
-    deploy:
-      restart_policy:
-        condition: on-failure
-        delay: 30s
-        max_attempts: 3
-        window: 120s
-    environment:
-      SPRING_PROFILES_ACTIVE: default
-      SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/
-      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eurekaserver:8070/eureka/
-      # SPRING_ZIPKIN_BASEURL: http://zipkin:9411/
-      MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: http://zipkin:9411/api/v2/spans
-   
-  gatewayserver:
-    image: eazybytes/gatewayserver:latest
-    mem_limit: 700m
-    ports:
-      - "8072:8072"
-    networks:
-      - eazybank
-    depends_on:
-      - configserver
-      - eurekaserver
-      - cards
-      - loans
-      - accounts
-    deploy:
-      restart_policy:
-        condition: on-failure
-        delay: 45s
-        max_attempts: 3
-        window: 180s
-    environment:
-      SPRING_PROFILES_ACTIVE: default
-      SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/
-      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eurekaserver:8070/eureka/
-      # SPRING_ZIPKIN_BASEURL: http://zipkin:9411/
-      MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: http://zipkin:9411/api/v2/spans
-      
-networks:
-  eazybank:
-```
-### \accounts\docker-compose\dev\docker-compose.yml
-```yaml
-version: "3.8"
-
-services:
-
-  zipkin:
-    image: openzipkin/zipkin
-    mem_limit: 700m
-    ports:
-      - "9411:9411"
-    networks:
-     - eazybank
+     - libantobank
      
   configserver:
-    image: eazybytes/configserver:latest
+    image: rafik790/bank-configserver:latest
     mem_limit: 700m
     ports:
       - "8071:8071"
     networks:
-     - eazybank
+      - libantobank
     depends_on:
-      - zipkin
-    environment:
-      SPRING_PROFILES_ACTIVE: dev
-      # SPRING_ZIPKIN_BASEURL: http://zipkin:9411/
-      MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: http://zipkin:9411/api/v2/spans
-   
+      - services
+      
   eurekaserver:
-    image: eazybytes/eurekaserver:latest
+    image: rafik790/bank-eurekaserver:latest
     mem_limit: 700m
     ports:
       - "8070:8070"
     networks:
-     - eazybank
+      - libantobank
     depends_on:
       - configserver
     deploy:
@@ -420,18 +263,16 @@ services:
         max_attempts: 3
         window: 120s
     environment:
-      SPRING_PROFILES_ACTIVE: dev
+      SPRING_PROFILES_ACTIVE: default
       SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/
-      # SPRING_ZIPKIN_BASEURL: http://zipkin:9411/
-      MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: http://zipkin:9411/api/v2/spans
       
   accounts:
-    image: eazybytes/accounts:latest
+    image: rafik790/bank-accounts:latest
     mem_limit: 700m
     ports:
       - "8080:8080"
     networks:
-      - eazybank
+      - libantobank
     depends_on:
       - configserver
       - eurekaserver
@@ -442,166 +283,17 @@ services:
         max_attempts: 3
         window: 120s
     environment:
-      SPRING_PROFILES_ACTIVE: dev
+      SPRING_PROFILES_ACTIVE: default
       SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eurekaserver:8070/eureka/
-      # SPRING_ZIPKIN_BASEURL: http://zipkin:9411/
-      MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: http://zipkin:9411/api/v2/spans
-  
-  loans:
-    image: eazybytes/loans:latest
-    mem_limit: 700m
-    ports:
-      - "8090:8090"
-    networks:
-      - eazybank
-    depends_on:
-      - configserver
-      - eurekaserver
-    deploy:
-      restart_policy:
-        condition: on-failure
-        delay: 30s
-        max_attempts: 3
-        window: 120s
-    environment:
-      SPRING_PROFILES_ACTIVE: dev
-      SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/
-      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eurekaserver:8070/eureka/
-      # SPRING_ZIPKIN_BASEURL: http://zipkin:9411/
-      MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: http://zipkin:9411/api/v2/spans
-    
-  cards:
-    image: eazybytes/cards:latest
-    mem_limit: 700m
-    ports:
-      - "9000:9000"
-    networks:
-      - eazybank
-    depends_on:
-      - configserver
-      - eurekaserver
-    deploy:
-      restart_policy:
-        condition: on-failure
-        delay: 30s
-        max_attempts: 3
-        window: 120s
-    environment:
-      SPRING_PROFILES_ACTIVE: dev
-      SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/
-      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eurekaserver:8070/eureka/
-      # SPRING_ZIPKIN_BASEURL: http://zipkin:9411/
-      MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: http://zipkin:9411/api/v2/spans
-  
-  gatewayserver:
-    image: eazybytes/gatewayserver:latest
-    mem_limit: 700m
-    ports:
-      - "8072:8072"
-    networks:
-      - eazybank
-    depends_on:
-      - configserver
-      - eurekaserver
-      - cards
-      - loans
-      - accounts
-    deploy:
-      restart_policy:
-        condition: on-failure
-        delay: 45s
-        max_attempts: 3
-        window: 180s
-    environment:
-      SPRING_PROFILES_ACTIVE: dev
-      SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/
-      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eurekaserver:8070/eureka/
-      # SPRING_ZIPKIN_BASEURL: http://zipkin:9411/
-      MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: http://zipkin:9411/api/v2/spans
-    
-networks:
-  eazybank:
-```
-### \accounts\docker-compose\prod\docker-compose.yml
-```yaml
-version: "3.8"
-
-services:
-
-  zipkin:
-    image: openzipkin/zipkin
-    mem_limit: 700m
-    ports:
-      - "9411:9411"
-    networks:
-     - eazybank
      
-  configserver:
-    image: eazybytes/configserver:latest
-    mem_limit: 700m
-    ports:
-      - "8071:8071"
-    networks:
-     - eazybank
-    depends_on:
-      - zipkin
-    environment:
-      SPRING_PROFILES_ACTIVE: prod
-      # SPRING_ZIPKIN_BASEURL: http://zipkin:9411/
-      MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: http://zipkin:9411/api/v2/spans
-   
-  eurekaserver:
-    image: eazybytes/eurekaserver:latest
-    mem_limit: 700m
-    ports:
-      - "8070:8070"
-    networks:
-     - eazybank
-    depends_on:
-      - configserver
-    deploy:
-      restart_policy:
-        condition: on-failure
-        delay: 15s
-        max_attempts: 3
-        window: 120s
-    environment:
-      SPRING_PROFILES_ACTIVE: prod
-      SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/
-      # SPRING_ZIPKIN_BASEURL: http://zipkin:9411/
-      MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: http://zipkin:9411/api/v2/spans
-      
-  accounts:
-    image: eazybytes/accounts:latest
-    mem_limit: 700m
-    ports:
-      - "8080:8080"
-    networks:
-      - eazybank
-    depends_on:
-      - configserver
-      - eurekaserver
-    deploy:
-      restart_policy:
-        condition: on-failure
-        delay: 30s
-        max_attempts: 3
-        window: 120s
-    environment:
-      SPRING_PROFILES_ACTIVE: prod
-      SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/
-      EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eurekaserver:8070/eureka/
-      # SPRING_ZIPKIN_BASEURL: http://zipkin:9411/
-      MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: http://zipkin:9411/api/v2/spans
-  
   loans:
-    image: eazybytes/loans:latest
+    image: rafik790/bank-loans:latest
     mem_limit: 700m
     ports:
       - "8090:8090"
     networks:
-      - eazybank
+      - libantobank
     depends_on:
       - configserver
       - eurekaserver
@@ -612,19 +304,17 @@ services:
         max_attempts: 3
         window: 120s
     environment:
-      SPRING_PROFILES_ACTIVE: prod
+      SPRING_PROFILES_ACTIVE: default
       SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eurekaserver:8070/eureka/
-      # SPRING_ZIPKIN_BASEURL: http://zipkin:9411/
-      MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: http://zipkin:9411/api/v2/spans
     
   cards:
-    image: eazybytes/cards:latest
+    image: rafik790/bank-cards:latest
     mem_limit: 700m
     ports:
-      - "9000:9000"
+      - "9090:9090"
     networks:
-      - eazybank
+      - libantobank
     depends_on:
       - configserver
       - eurekaserver
@@ -635,25 +325,23 @@ services:
         max_attempts: 3
         window: 120s
     environment:
-      SPRING_PROFILES_ACTIVE: prod
+      SPRING_PROFILES_ACTIVE: default
       SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eurekaserver:8070/eureka/
-      # SPRING_ZIPKIN_BASEURL: http://zipkin:9411/
-      MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: http://zipkin:9411/api/v2/spans
-  
+      
   gatewayserver:
-    image: eazybytes/gatewayserver:latest
+    image: rafik790/bank-gatewayserver:latest
     mem_limit: 700m
     ports:
       - "8072:8072"
     networks:
-      - eazybank
+      - libantobank
     depends_on:
       - configserver
       - eurekaserver
-      - cards
-      - loans
       - accounts
+      - loans
+      - cards
     deploy:
       restart_policy:
         condition: on-failure
@@ -661,22 +349,17 @@ services:
         max_attempts: 3
         window: 180s
     environment:
-      SPRING_PROFILES_ACTIVE: prod
+      SPRING_PROFILES_ACTIVE: default
       SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eurekaserver:8070/eureka/
-      # SPRING_ZIPKIN_BASEURL: http://zipkin:9411/
-      MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: http://zipkin:9411/api/v2/spans
       
 networks:
-  eazybank:
+  libantobank:
 ```
+
 - Based on the active profile that you want start the microservices, open the command line tool where the docker-compose.yml is present and run the docker compose command **"docker-compose up"** to start all the microservices containers with a single command. All the running containers can be validated by running a docker command **"docker ps"**.
-- To test the distributed tracing changes along with log aggregation, access the URL http://localhost:8072/accounts/myCusomerDetails through Postman by passing the below request in JSON format. You should be able to see the tracing details inside zipkin console like we discussed in the course.
-  ```json
-  {
-    "customerId": 1
-  }
-  ```
+- To test the distributed tracing changes along with log aggregation, access the URL http://localhost:8072/api/accounts/getCustomerDetails/1. You should be able to see the tracing details inside zipkin console like we discussed in the course.
+ 
 - Stop all the running containers by executing the docker compose command "docker-compose down" from the location where docker-compose.yml is present.
 
 ---
