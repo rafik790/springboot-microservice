@@ -67,7 +67,7 @@ public class AccountsController {
 	
 	
 	@GetMapping("/getCustomerDetails/{customerId}")
-	/*@CircuitBreaker(name="getCustomerDetailsCircuitBreaker",fallbackMethod="getCustomerDetailsFallBack")*/
+	@CircuitBreaker(name="getCustomerDetailsCircuitBreaker",fallbackMethod="getCustomerDetailsFallBack")
 	@Retry(name="getCustomerDetailsRetry",fallbackMethod="getCustomerDetailsFallBack")
 	public CustomerDetailsResp myCustomerDetails(@RequestHeader("libanto-correlation-id") String correlationid,
 			@PathVariable(value = "customerId") int customerId) {
