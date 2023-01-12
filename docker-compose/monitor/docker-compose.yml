@@ -9,6 +9,18 @@ services:
       - ./prometheus.yml:/etc/prometheus/prometheus.yml
     networks:
       - libantobank 
+  grafana:
+    image: "grafana/grafana:latest"
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_USER=admin
+      - GF_SECURITY_ADMIN_PASSWORD=12345678aA
+    networks:
+     - libantobank
+    depends_on:
+      - prometheus
+      
   zipkin:
     image: openzipkin/zipkin
     mem_limit: 700m
