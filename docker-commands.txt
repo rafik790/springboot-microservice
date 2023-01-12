@@ -44,17 +44,21 @@ docker-compose stop
 mvn clean install '-Dmaven.test.skip=true'
 mvn clean package '-Dmaven.test.skip=true'
 
-docker build . -t bank-accounts
+docker build . -t rafik790/bank-accounts
 docker tag 	bank-accounts rafik790/bank-accounts
 docker push rafik790/bank-accounts
+
+mvn spring-boot:build-image '-Dmaven.test.skip=true'
+docker tag bank-loans rafik790/bank-loans
+docker push rafik790/bank-loans
 
 mvn spring-boot:build-image '-Dmaven.test.skip=true'
 docker tag 	bank-cards rafik790/bank-cards
 docker push rafik790/bank-cards
 
 mvn spring-boot:build-image '-Dmaven.test.skip=true'
-docker tag bank-loans rafik790/bank-loans
-docker push rafik790/bank-loans
+docker tag bank-configserver rafik790/bank-configserver
+docker push rafik790/bank-configserver
 
 mvn spring-boot:build-image '-Dmaven.test.skip=true'
 docker tag bank-eurekaserver rafik790/bank-eurekaserver

@@ -1,7 +1,15 @@
 version: "3.8"
 
 services:
-   zipkin:
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+      - libantobank 
+  zipkin:
     image: openzipkin/zipkin
     mem_limit: 700m
     ports:
@@ -17,8 +25,10 @@ services:
     networks:
       - libantobank
     depends_on:
-      - services
-      
+      - zipkin
+    environment:
+      SPRING_ZIPKIN_BASEURL: http://zipkin:9411/
+     
   eurekaserver:
     image: rafik790/bank-eurekaserver:latest
     mem_limit: 700m
@@ -37,6 +47,7 @@ services:
     environment:
       SPRING_PROFILES_ACTIVE: default
       SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/
+      SPRING_ZIPKIN_BASEURL: http://zipkin:9411/
       
   accounts:
     image: rafik790/bank-accounts:latest
@@ -58,6 +69,7 @@ services:
       SPRING_PROFILES_ACTIVE: default
       SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eurekaserver:8070/eureka/
+      SPRING_ZIPKIN_BASEURL: http://zipkin:9411/
      
   loans:
     image: rafik790/bank-loans:latest
@@ -79,6 +91,7 @@ services:
       SPRING_PROFILES_ACTIVE: default
       SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eurekaserver:8070/eureka/
+      SPRING_ZIPKIN_BASEURL: http://zipkin:9411/
     
   cards:
     image: rafik790/bank-cards:latest
@@ -100,6 +113,7 @@ services:
       SPRING_PROFILES_ACTIVE: default
       SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eurekaserver:8070/eureka/
+      SPRING_ZIPKIN_BASEURL: http://zipkin:9411/
       
   gatewayserver:
     image: rafik790/bank-gatewayserver:latest
@@ -124,6 +138,7 @@ services:
       SPRING_PROFILES_ACTIVE: default
       SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eurekaserver:8070/eureka/
+      SPRING_ZIPKIN_BASEURL: http://zipkin:9411/
       
 networks:
   libantobank:

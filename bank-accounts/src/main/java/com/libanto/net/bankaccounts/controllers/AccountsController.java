@@ -27,7 +27,7 @@ import com.libanto.net.bankaccounts.service.client.LoansFeignClient;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import io.github.resilience4j.ratelimiter.annotation.RateLimiter;
 import io.github.resilience4j.retry.annotation.Retry;
-
+import io.micrometer.core.annotation.Timed;
 
 @RestController
 public class AccountsController {
@@ -47,6 +47,7 @@ public class AccountsController {
 	
 	
 	@GetMapping("/myAccount/{customerId}")
+	@Timed(value="getMyAccountDetails.time",description="Time taken to return Account Details")
 	public Account getMyAccountDetails(@PathVariable(value = "customerId") int customerId) {
 		LOGGER.info("Customer ID: {}", customerId);
 		Account account = accountsRepository.findByCustomerId(customerId);
@@ -67,9 +68,10 @@ public class AccountsController {
 	
 	
 	@GetMapping("/getCustomerDetails/{customerId}")
+	@Timed(value="getCustomerDetails.time",description="Time taken to return Account Details")
 	@CircuitBreaker(name="getCustomerDetailsCircuitBreaker",fallbackMethod="getCustomerDetailsFallBack")
 	@Retry(name="getCustomerDetailsRetry",fallbackMethod="getCustomerDetailsFallBack")
-	public CustomerDetailsResp myCustomerDetails(@RequestHeader("libanto-correlation-id") String correlationid,
+	public CustomerDetailsResp getCustomerDetails(@RequestHeader("libanto-correlation-id") String correlationid,
 			@PathVariable(value = "customerId") int customerId) {
 		LOGGER.info("correlation-id: {}", correlationid);
 		Account accounts = accountsRepository.findByCustomerId(customerId);
