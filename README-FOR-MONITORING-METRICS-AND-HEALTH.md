@@ -193,7 +193,7 @@ public class AccountsController {
 - Like we discussed in the course, create a **prometheus.yml** inside the path and content like shown below,
   ### \accounts\docker-compose\monitoring\prometheus.yml
 ```yaml
-  global:
+global:
   scrape_interval:     5s # Set the scrape interval to every 5 seconds.
   evaluation_interval: 5s # Evaluate rules every 5 seconds.
 scrape_configs:
@@ -208,7 +208,7 @@ scrape_configs:
   - job_name: 'cards'
     metrics_path: '/actuator/prometheus'
     static_configs:
-    - targets: ['cards:9000']
+    - targets: ['cards:8091']
   ```
 - Now in the same folder where **prometheus.yml** is present, create a **docker-compose.yml** file with the following content,
 ### \accounts\docker-compose\monitoring\docker-compose.yml
@@ -216,57 +216,53 @@ scrape_configs:
 version: "3.8"
 
 services:
-
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090"
+    volumes:
+      - ./prometheus.yml:/etc/prometheus/prometheus.yml
+    networks:
+      - libantobank 
   grafana:
     image: "grafana/grafana:latest"
     ports:
       - "3000:3000"
     environment:
       - GF_SECURITY_ADMIN_USER=admin
-      - GF_SECURITY_ADMIN_PASSWORD=password
+      - GF_SECURITY_ADMIN_PASSWORD=12345678aA
     networks:
-     - eazybank
+     - libantobank
     depends_on:
-      - prometheus  
-
-  prometheus:
-   image: prom/prometheus:latest
-   ports:
-      - "9090:9090"
-   volumes:
-    - ./prometheus.yml:/etc/prometheus/prometheus.yml
-   networks:
-    - eazybank
-   
+      - prometheus
+      
   zipkin:
     image: openzipkin/zipkin
     mem_limit: 700m
     ports:
       - "9411:9411"
     networks:
-     - eazybank
-
+     - libantobank
+     
   configserver:
-    image: eazybytes/configserver:latest
+    image: rafik790/bank-configserver:latest
     mem_limit: 700m
     ports:
       - "8071:8071"
     networks:
-     - eazybank
+      - libantobank
     depends_on:
       - zipkin
     environment:
-      SPRING_PROFILES_ACTIVE: default
-      # SPRING_ZIPKIN_BASEURL: http://zipkin:9411/
-      MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: http://zipkin:9411/api/v2/spans
-      
+      SPRING_ZIPKIN_BASEURL: http://zipkin:9411/
+     
   eurekaserver:
-    image: eazybytes/eurekaserver:latest
+    image: rafik790/bank-eurekaserver:latest
     mem_limit: 700m
     ports:
       - "8070:8070"
     networks:
-     - eazybank
+      - libantobank
     depends_on:
       - configserver
     deploy:
@@ -278,16 +274,15 @@ services:
     environment:
       SPRING_PROFILES_ACTIVE: default
       SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/
-      # SPRING_ZIPKIN_BASEURL: http://zipkin:9411/
-      MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: http://zipkin:9411/api/v2/spans
-
+      SPRING_ZIPKIN_BASEURL: http://zipkin:9411/
+      
   accounts:
-    image: eazybytes/accounts:latest
+    image: rafik790/bank-accounts:latest
     mem_limit: 700m
     ports:
       - "8080:8080"
     networks:
-      - eazybank
+      - libantobank
     depends_on:
       - configserver
       - eurekaserver
@@ -301,16 +296,15 @@ services:
       SPRING_PROFILES_ACTIVE: default
       SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eurekaserver:8070/eureka/
-      # SPRING_ZIPKIN_BASEURL: http://zipkin:9411/
-      MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: http://zipkin:9411/api/v2/spans
-  
+      SPRING_ZIPKIN_BASEURL: http://zipkin:9411/
+     
   loans:
-    image: eazybytes/loans:latest
+    image: rafik790/bank-loans:latest
     mem_limit: 700m
     ports:
       - "8090:8090"
     networks:
-      - eazybank
+      - libantobank
     depends_on:
       - configserver
       - eurekaserver
@@ -324,16 +318,15 @@ services:
       SPRING_PROFILES_ACTIVE: default
       SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eurekaserver:8070/eureka/
-      # SPRING_ZIPKIN_BASEURL: http://zipkin:9411/
-      MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: http://zipkin:9411/api/v2/spans
+      SPRING_ZIPKIN_BASEURL: http://zipkin:9411/
     
   cards:
-    image: eazybytes/cards:latest
+    image: rafik790/bank-cards:latest
     mem_limit: 700m
     ports:
-      - "9000:9000"
+      - "8091:8091"
     networks:
-      - eazybank
+      - libantobank
     depends_on:
       - configserver
       - eurekaserver
@@ -347,22 +340,21 @@ services:
       SPRING_PROFILES_ACTIVE: default
       SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eurekaserver:8070/eureka/
-      # SPRING_ZIPKIN_BASEURL: http://zipkin:9411/
-      MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: http://zipkin:9411/api/v2/spans
+      SPRING_ZIPKIN_BASEURL: http://zipkin:9411/
       
   gatewayserver:
-    image: eazybytes/gatewayserver:latest
+    image: rafik790/bank-gatewayserver:latest
     mem_limit: 700m
     ports:
       - "8072:8072"
     networks:
-      - eazybank
+      - libantobank
     depends_on:
       - configserver
       - eurekaserver
-      - cards
-      - loans
       - accounts
+      - loans
+      - cards
     deploy:
       restart_policy:
         condition: on-failure
@@ -373,15 +365,14 @@ services:
       SPRING_PROFILES_ACTIVE: default
       SPRING_CONFIG_IMPORT: configserver:http://configserver:8071/
       EUREKA_CLIENT_SERVICEURL_DEFAULTZONE: http://eurekaserver:8070/eureka/
-      # SPRING_ZIPKIN_BASEURL: http://zipkin:9411/
-      MANAGEMENT_ZIPKIN_TRACING_ENDPOINT: http://zipkin:9411/api/v2/spans
-
+      SPRING_ZIPKIN_BASEURL: http://zipkin:9411/
+      
 networks:
-  eazybank:
+  libantobank:
 ```
 - Open the command line tool where the docker-compose.yml is present and run the docker compose command **"docker-compose up"** to start all the microservices containers with a single command. All the running containers can be validated by running a docker command **"docker ps"**.
 - Open the URL http://localhost:9090/targets/ inside a browser and validate all the details, graphs present inside prometheus like we discussed in the course.
-- Open the URL http://localhost:3000/login/ inside a browser and enter the login details(**admin/password**) of Grafana like we discussed in the course. Inside Grafana provide prometheus details, build custom dashboards, alerts like we discussed in the course.
+- Open the URL http://localhost:3000/login/ inside a browser and enter the login details(**admin/12345678aA**) of Grafana like we discussed in the course. Inside Grafana provide prometheus details, build custom dashboards, alerts like we discussed in the course.
 - Stop all the running containers by executing the docker compose command "docker-compose down" from the location where docker-compose.yml is present.
 
 ---
