@@ -70,7 +70,7 @@ public class AccountsController {
 	@GetMapping("/getCustomerDetails/{customerId}")
 	@Timed(value="getCustomerDetails.time",description="Time taken to return Account Details")
 	@CircuitBreaker(name="getCustomerDetailsCircuitBreaker",fallbackMethod="getCustomerDetailsFallBack")
-	@Retry(name="getCustomerDetailsRetry",fallbackMethod="getCustomerDetailsFallBack")
+	//@Retry(name="getCustomerDetailsRetry",fallbackMethod="getCustomerDetailsFallBack")
 	public CustomerDetailsResp getCustomerDetails(@RequestHeader("libanto-correlation-id") String correlationid,
 			@PathVariable(value = "customerId") int customerId) {
 		LOGGER.info("correlation-id: {}", correlationid);
