@@ -1,0 +1,43 @@
+
+***********EKS************
+tutorils:
+
+https://www.youtube.com/watch?v=U3SowMbnqBw
+
+Download Kubectl::
+https://docs.aws.amazon.com/eks/latest/userguide/install-kubectl.html
+https://docs.aws.amazon.com/cli/latest/reference/eks/index.html
+
+curl -O https://s3.us-west-2.amazonaws.com/amazon-eks/1.24.7/2022-10-31/bin/windows/amd64/kubectl.exe
+
+To create a new cluster::
+aws eks create-cluster --name dev-libanto --kubernetes-version 1.24 --role-arn arn:aws:iam::974747042145:role/customEksClusterRole --resources-vpc-config subnetIds=subnet-0bb5a0a1ab8b2c5af,subnet-079291fa509279d7b,subnet-0618472d9238e916b
+aws eks describe-cluster --name dev-libanto --query cluster.status
+aws eks describe-cluster --name dev-libanto
+aws eks delete-cluster --name dev-libanto
+aws eks describe-cluster --name dev-libanto --version
+aws eks list-clusters
+
+To create nodes group::
+aws eks create-nodegroup --cluster-name dev-libanto --nodegroup-name cluster-node-grp --scaling-config minSize=2,maxSize=2,desiredSize=2 --disk-size 5 --subnets "subnet-0bb5a0a1ab8b2c5af" "subnet-079291fa509279d7b" "subnet-0618472d9238e916b" --instance-types "t2.micro" --ami-type AL2_x86_64 --node-role arn:aws:iam::974747042145:role/customEKSWorkerRole
+aws eks describe-nodegroup --cluster-name dev-libanto --nodegroup-name cluster-node-grp
+aws eks delete-nodegroup --cluster-name dev-libanto --nodegroup-name cluster-node-grp
+  
+  
+kubectl version --short --client
+
+3.FSPCreate or update the kubeconfig file for your cluster:
+aws eks --region ap-south-1 update-kubeconfig --name dev-libanto
+
+4.FSPTest your configuration:
+kubectl get svc
+kubectl get nodes
+kubectl get pods
+kubectl get deployment
+kubectl get replicaset
+kubectl get all
+kubectl get configmap
+kubectl apply -f 1_configmaps.yml
+kubectl delete configmap <configmap-name>
+
+https://docs.aws.amazon.com/eks/latest/userguide/add-user-role.html
