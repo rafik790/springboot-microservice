@@ -40,4 +40,6 @@ kubectl get configmap
 kubectl apply -f 1_configmaps.yml
 kubectl delete configmap <configmap-name>
 
+kubectl scale deployment account-deployment --replicas=3
+
 https://docs.aws.amazon.com/eks/latest/userguide/add-user-role.html
