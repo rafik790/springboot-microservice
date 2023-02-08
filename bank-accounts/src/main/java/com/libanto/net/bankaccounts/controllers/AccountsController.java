@@ -101,7 +101,7 @@ public class AccountsController {
 	@GetMapping("/sayHello")
 	@RateLimiter(name = "sayHello", fallbackMethod = "sayHelloFallback")
 	public String sayHello() {
-		return "Hello, Welcome to LibantoBank";
+		return "Hello, Welcome to LibantoBank k8s";
 	}
 
 	@SuppressWarnings("unused")

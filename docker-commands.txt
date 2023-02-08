@@ -43,8 +43,24 @@ docker-compose stop
 
 mvn clean install '-Dmaven.test.skip=true'
 mvn clean package '-Dmaven.test.skip=true'
+docker build . -t rafik790/bank-configserver
+docker push rafik790/bank-configserver
+
+docker build . -t rafik790/bank-eurekaserver
+docker push rafik790/bank-eurekaserver
 
 docker build . -t rafik790/bank-accounts
+docker push rafik790/bank-accounts
+
+docker build . -t rafik790/bank-cards
+docker push rafik790/bank-cards
+
+docker build . -t rafik790/bank-loans
+docker push rafik790/bank-loans
+
+docker build . -t rafik790/bank-gatewayserver
+docker push rafik790/bank-gatewayserver
+
 docker tag 	bank-accounts rafik790/bank-accounts
 docker push rafik790/bank-accounts
 

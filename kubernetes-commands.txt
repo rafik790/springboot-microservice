@@ -14,13 +14,14 @@ To create a new cluster::
 aws eks create-cluster --name dev-libanto --kubernetes-version 1.24 --role-arn arn:aws:iam::974747042145:role/customEksClusterRole --resources-vpc-config subnetIds=subnet-0bb5a0a1ab8b2c5af,subnet-079291fa509279d7b,subnet-0618472d9238e916b
 aws eks describe-cluster --name dev-libanto --query cluster.status
 aws eks describe-cluster --name dev-libanto
-aws eks delete-cluster --name dev-libanto
 aws eks describe-cluster --name dev-libanto --version
+aws eks delete-cluster --name dev-libanto
 aws eks list-clusters
 
 To create nodes group::
-aws eks create-nodegroup --cluster-name dev-libanto --nodegroup-name cluster-node-grp --scaling-config minSize=2,maxSize=2,desiredSize=2 --disk-size 5 --subnets "subnet-0bb5a0a1ab8b2c5af" "subnet-079291fa509279d7b" "subnet-0618472d9238e916b" --instance-types "t2.micro" --ami-type AL2_x86_64 --node-role arn:aws:iam::974747042145:role/customEKSWorkerRole
+aws eks create-nodegroup --cluster-name dev-libanto --nodegroup-name cluster-node-grp --scaling-config minSize=2,maxSize=2,desiredSize=2 --disk-size 5 --subnets "subnet-0bb5a0a1ab8b2c5af" "subnet-079291fa509279d7b" "subnet-0618472d9238e916b" --instance-types "t2.small" --ami-type AL2_x86_64 --node-role arn:aws:iam::974747042145:role/customEKSWorkerRole
 aws eks describe-nodegroup --cluster-name dev-libanto --nodegroup-name cluster-node-grp
+aws eks describe-nodegroup --cluster-name dev-libanto --nodegroup-name cluster-node-grp --query nodegroup.status
 aws eks delete-nodegroup --cluster-name dev-libanto --nodegroup-name cluster-node-grp
   
   
@@ -30,16 +31,47 @@ kubectl version --short --client
 aws eks --region ap-south-1 update-kubeconfig --name dev-libanto
 
 4.FSPTest your configuration:
-kubectl get svc
 kubectl get nodes
-kubectl get pods
-kubectl get deployment
-kubectl get replicaset
-kubectl get all
+kubectl describe nodes
 kubectl get configmap
 kubectl apply -f 1_configmaps.yml
+kubectl apply -f 2_zipkin.yml
+kubectl apply -f 3_configserver.yml
+kubectl apply -f 4_eurekaserver.yml
+kubectl apply -f 5_accounts.yml
+kubectl apply -f 6_cards.yml
+kubectl apply -f 7_loans.yml
+kubectl apply -f 8_gateways.yml
+
+
+kubectl get replicaset => get replica details with desire  number/ current number
+kubectl get svc
+kubectl get deployments
+kubectl scale deployment accounts-deployment --replicas=3
+
+kubectl get pods
+kubectl describe pod  => Describe pod and show the details of image used
+
+
+kubectl get all
 kubectl delete configmap <configmap-name>
 
-kubectl scale deployment account-deployment --replicas=3
+kubectl set image deployment accounts-deployment accounts=rafik790/bank-accounts:k8s
+
+Rollout with new image::
+kubectl set image deployment accounts-deployment accounts=rafik790/bank-accounts:k8s
+
+Rollback in previous image::
+kubectl rollout history deployment accounts-deployment
+kubectl rollout undo deployment accounts-deployment --to-revision=1
+
+
+To truble shoot the error:::
+kubectl describe pod
+kubectl logs <pod-name> --all-containers
+
+Autoscaling in kubernetes: HPA(Horizantal POD Autoscaling)
+kubectl get hpa
+kubectl autoscale deployment accounts-deployment --min=2 --max=4 --cpu-percent=70 
 
 https://docs.aws.amazon.com/eks/latest/userguide/add-user-role.html

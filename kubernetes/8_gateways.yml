@@ -1,24 +1,24 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: accounts-deployment
+  name: gatewayserver-deployment
   labels:
-    app: accounts
+    app: gatewayserver
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
-      app: accounts
+      app: gatewayserver
   template:
     metadata:
       labels:
-        app: accounts
+        app: gatewayserver
     spec:
       containers:
-      - name: accounts
-        image: rafik790/bank-accounts:latest
+      - name: gatewayserver
+        image: rafik790/bank-gatewayserver:latest
         ports:
-        - containerPort: 8080
+        - containerPort: 8072
         env:
         - name: SPRING_PROFILES_ACTIVE
           valueFrom: 
@@ -44,12 +44,12 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: accounts-service
+  name: gatewayserver-service
 spec:
   selector:
-    app: accounts
+    app: gatewayserver
   type: LoadBalancer
   ports:
     - protocol: TCP
-      port: 8080
-      targetPort: 8080
+      port: 8072
+      targetPort: 8072

@@ -1,24 +1,24 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: accounts-deployment
+  name: loans-deployment
   labels:
-    app: accounts
+    app: loans
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
-      app: accounts
+      app: loans
   template:
     metadata:
       labels:
-        app: accounts
+        app: loans
     spec:
       containers:
-      - name: accounts
-        image: rafik790/bank-accounts:latest
+      - name: loans
+        image: rafik790/bank-loans:latest
         ports:
-        - containerPort: 8080
+        - containerPort: 8090
         env:
         - name: SPRING_PROFILES_ACTIVE
           valueFrom: 
@@ -44,12 +44,12 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: accounts-service
+  name: loans-service
 spec:
   selector:
-    app: accounts
+    app: loans
   type: LoadBalancer
   ports:
     - protocol: TCP
-      port: 8080
-      targetPort: 8080
+      port: 8090
+      targetPort: 8090
