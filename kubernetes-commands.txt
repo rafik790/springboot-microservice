@@ -74,4 +74,10 @@ Autoscaling in kubernetes: HPA(Horizantal POD Autoscaling)
 kubectl get hpa
 kubectl autoscale deployment accounts-deployment --min=2 --max=4 --cpu-percent=70 
 
+Delete deployment and service::
+kubectl delete -f 8_gateways.yml
+kubectl delete -f 7_loans.yml
+kubectl delete -f 6_cards.yml
+kubectl delete -f 5_accounts.yml
+
 https://docs.aws.amazon.com/eks/latest/userguide/add-user-role.html
