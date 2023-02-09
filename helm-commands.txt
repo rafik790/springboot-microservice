@@ -1,0 +1,14 @@
+install helm:
+go to helm.sh
+
+helm create <CHART(libantobank-common)> =>Create blank chart
+helm dependencies build => Build is used to reconstruct a chart dependencies
+helm install <NAME> <CHART(libantobank-common)> => Install the manifests mentioned in the [CHART] with a given release name inside [NAME]
+helm upgrade <NAME> <CHART(libantobank-common)> => Upgrades a specified release to a new version of a chart
+helm history <NAME> => Prints historical revisions for a given release 
+helm rollback <NAME> <REVISION> => Rollback a release to a previous revision.
+helm uninstall <NAME> => Removes all of the resources associated with the last release of the chart as well as the release history
+helm template <NAME> <CHART> =>Render chart templates locally along with the values and display the ourput
+helm ls => This command lists all of the release for a specified namespace
+
+

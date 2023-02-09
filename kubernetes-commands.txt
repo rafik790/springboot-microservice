@@ -58,13 +58,14 @@ kubectl delete configmap <configmap-name>
 
 kubectl set image deployment accounts-deployment accounts=rafik790/bank-accounts:k8s
 
-Rollout with new image::
+:::::::::::::Rollout with new image::::::::::::::::
 kubectl set image deployment accounts-deployment accounts=rafik790/bank-accounts:k8s
 
-Rollback in previous image::
+:::::::::::::Rollback in previous image:::::::::::
 kubectl rollout history deployment accounts-deployment
 kubectl rollout undo deployment accounts-deployment --to-revision=1
 
+kubectl get ingress
 
 To truble shoot the error:::
 kubectl describe pod
