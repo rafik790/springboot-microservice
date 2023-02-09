@@ -31,7 +31,7 @@ kubectl version --short --client
 aws eks --region ap-south-1 update-kubeconfig --name dev-libanto
 
 4.FSPTest your configuration:
-kubectl get nodes
+kubectl get nodes [--output wide]
 kubectl describe nodes
 kubectl get configmap
 kubectl apply -f 1_configmaps.yml
