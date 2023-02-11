@@ -116,4 +116,4 @@ helm install keycloak --set auth.adminPassword=12345678a my-repo/keycloak
 - Deploy all the microservices using Helm charts and test.
 - tlast, make sure to test Authorization changes as well by creating a new role **ACCOUNTS** inside Keycloak
 
-#HURRAY !!! Congratulations, you successfully secured your microservices using the OAuth2 client credentials grant flow
+# HURRAY !!! Congratulations, you successfully secured your microservices using the OAuth2 client credentials grant flow
