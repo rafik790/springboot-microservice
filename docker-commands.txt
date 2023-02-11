@@ -45,7 +45,10 @@ docker-compose stop
 
 
 mvn clean install '-Dmaven.test.skip=true'
+mvn clean install -Dmaven.test.skip=true
+
 mvn clean package '-Dmaven.test.skip=true'
+
 docker build . -t rafik790/bank-configserver
 docker push rafik790/bank-configserver
 
