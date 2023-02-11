@@ -36,6 +36,9 @@ $docker login -u "rafik790" -p "10Rafkol@" docker.io
 Run docker images:
 docker run -it -p 8090:8090 -d rafik790/micro/bank-loans
 
+Run zipkin:
+docker run -p 9411:9411 openzipkin/zipkin
+
 docker-compose::
 docker-compose up
 docker-compose stop

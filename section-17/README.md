@@ -3,9 +3,22 @@
 ### Key steps:
 - Install & setup the Keycloak using docker command in your local system.
 - Register a client inside Keycloak that supports Client Credentials grant flow.
-
+```properties
 docker run -p 7080:8080 -e KEYCLOAK_ADMIN=admin -e KEYCLOAK_ADMIN_PASSWORD=admin quay.io/keycloak/keycloak:20.0.3 start-dev
+GetAPIEndPoint=http://localhost:7080/realms/master/.well-known/openid-configuration
 
+Get Toke APIs:
+http://localhost:7080/realms/master/protocol/openid-connect/token
+Method: Post
+client_id:
+client_secret:
+scope: openid
+grant_type: client_credentials
+
+Run zipkin:
+docker run -p 9411:9411 openzipkin/zipkin
+
+```
 - Pass your client details which is created in the previous step as a request inside Postman & make sure to get an access token from the keycloak.
 - Open the pom.xml of the microservices gatewayserver and make sure to add the below required dependencies of Spring Security,OAuth2
 ```xml
