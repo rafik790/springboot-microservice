@@ -1,0 +1,6 @@
+dependencies:
+- name: libantobank-common
+  repository: file://../../libantobank-common
+  version: 0.1.0
+digest: sha256:da47fa583d3ab54ba84f341340123234101ce485d0a80d894fc0ee464715b2c2
+generated: "2023-02-09T22:57:17.4627513+05:30"
